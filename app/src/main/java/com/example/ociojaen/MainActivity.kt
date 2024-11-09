@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             // Verifica si los datos coinciden
             if (user == MYUSER && pass == MYPASS) {
                 // Si los datos son correctos, pasa a otro Activity
-                val intent = Intent(this, PrincipalActivity::class.java).apply{
+                val intent = Intent(this, EventosActivity::class.java).apply{
                     // Le paso al PrincipalActivity el usuario introducido
                     putExtra("EXTRA_USER", user)
                 }
