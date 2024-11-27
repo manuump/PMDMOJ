@@ -14,8 +14,6 @@ En este proyecto, desarrollamos una interfaz intuitiva y fácil de usar, que te 
 
 ## CONTROL DE VERSIONES : 
 
-## CONTROL DE VERSIONES : 
-
 ### Version 1.1 - RecyclerView, POJO y Adapter
 
 En esta versión, he utilizado **RecyclerView**, **POJO** y **Adapter**. En mi proyecto he generado dos nuevos paquetes llamados: **Models** y **Adapter**, y un nuevo Activity **EventosActivity**.
