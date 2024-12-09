@@ -12,7 +12,8 @@ import com.example.ociojaen.models.Evento
 
 class EventoAdapter(
     private val eventos: MutableList<Evento>, // Lista de eventos
-    private val onEliminarClick: (Evento) -> Unit // Callback para eliminar
+    private val onEliminarClick: (Evento) -> Unit, // Callback para eliminar
+    private val onEditarClick: (Evento) -> Unit
 ) : RecyclerView.Adapter<EventoAdapter.EventoViewHolder>() {
 
     // ViewHolder para mantener las referencias de cada item
@@ -21,6 +22,7 @@ class EventoAdapter(
         val tvTitulo: TextView = itemView.findViewById(R.id.tvTitulo)
         val tvDescripcion: TextView = itemView.findViewById(R.id.tvDescripcion)
         val btnEliminar: Button = itemView.findViewById(R.id.btnEliminar)
+        val btnEditar:Button = itemView.findViewById(R.id.btnEditar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventoViewHolder {
@@ -42,6 +44,11 @@ class EventoAdapter(
         // Manejar clic en botón eliminar
         holder.btnEliminar.setOnClickListener {
             onEliminarClick(evento) // Callback para eliminar el evento
+        }
+
+        // Manejar clic en botón editar
+        holder.btnEditar.setOnClickListener {
+            onEditarClick(evento) // Callback para editar el evento
         }
     }
 
