@@ -11,3 +11,23 @@ En este proyecto, desarrollamos una interfaz intuitiva y fácil de usar, que te 
 - **Login de usuarios:** Sistema de autenticación que permite a los usuarios registrarse e iniciar sesión para una experiencia personalizada.
 
 Únete a nosotros y comienza a explorar Jaén de una forma diferente. ¡Diviértete y haz que cada día sea una nueva aventura!
+
+## CONTROL DE VERSIONES : 
+
+### Version 1.1 - RecyclerView, POJO y Adapter
+
+En esta versión, he utilizado **RecyclerView**, **POJO** y **Adapter**. En mi proyecto he generado dos nuevos paquetes llamados: **Models** y **Adapter**, y un nuevo Activity **EventosActivity**.
+
+- **Models**:  
+  La clase `Evento` es una clase de datos (POJO) que representa un evento con tres propiedades:
+  
+  - **Titulo**: Un `String` que contiene el título del evento.
+  - **Descripcion**: Un `String` que describe brevemente el evento.
+  - **Imagen**: Un `String` que contiene el nombre o referencia de la imagen asociada al evento (un nombre de archivo de recursos `drawable`).
+
+- **Adapter**:  
+  La clase `EventoAdapter` es un adaptador personalizado para un `RecyclerView` que muestra una lista de eventos. Cada evento tiene un título, una descripción, una imagen y un botón para eliminarlo.
+
+- **EventosActivity**:  
+  La clase `EventosActivity` es una Activity en Android que gestiona la lista de eventos mediante un `RecyclerView`, utilizando un adaptador personalizado (`EventoAdapter`) para mostrar los eventos en la interfaz de usuario.
+
