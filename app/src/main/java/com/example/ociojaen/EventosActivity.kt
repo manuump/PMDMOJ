@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ociojaen.adapter.EventoAdapter
 import com.example.ociojaen.models.Evento
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class EventosActivity : AppCompatActivity() {
 
@@ -31,7 +30,7 @@ class EventosActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
 
-        // Crear lista
+        // Crear lista de ejemplo
         listaEventos.add(Evento(
             "Castillo de Santa Catalina",
             "Visita guiada al Castillo de Santa Catalina de Jaén, desde 3,5€.",
@@ -58,20 +57,11 @@ class EventosActivity : AppCompatActivity() {
             "expoliva")
         )
 
-        adapter = EventoAdapter(listaEventos,
-            onEliminarClick = { evento ->
-                eliminarEvento(evento) // Llamar a la función eliminar
-            },
-            onEditarClick = { evento ->
-                mostrarDialogoEditarEvento(evento) // Llamar a la función editar
-            }
-        )
-
-        recyclerView.adapter = adapter
-
-        findViewById<FloatingActionButton>(R.id.btnAdd).setOnClickListener {
-            mostrarDialogoAgregarEvento()
+        // Configurar adaptador
+        adapter = EventoAdapter(listaEventos) { evento ->
+            eliminarEvento(evento) // Llamar función para eliminar
         }
+        recyclerView.adapter = adapter
     }
 
     private fun eliminarEvento(evento: Evento) {
@@ -79,25 +69,6 @@ class EventosActivity : AppCompatActivity() {
         if (position != -1) { // Validar que el evento existe
             listaEventos.removeAt(position) // Eliminar el evento de la lista
             adapter.notifyItemRemoved(position) // Notificar al adaptador con animación
-        }
-    }
-
-    private fun mostrarDialogoAgregarEvento() {
-        val dialogFragment = EventoDialogFragment { nuevoEvento ->
-            listaEventos.add(nuevoEvento) // Agregar a la lista
-            adapter.notifyItemInserted(listaEventos.size - 1) // Notificar al adaptador
-        }
-        dialogFragment.show(supportFragmentManager, "AgregarEventoDialog")
-    }
-
-    private fun mostrarDialogoEditarEvento(evento: Evento) {
-        val position = listaEventos.indexOf(evento)
-        if (position != -1) {
-            val dialogFragment = EventoDialogFragment(evento) { eventoEditado ->
-                listaEventos[position] = eventoEditado // Actualizar el evento
-                adapter.notifyItemChanged(position) // Notificar al adaptador
-            }
-            dialogFragment.show(supportFragmentManager, "EditarEventoDialog")
         }
     }
 }
