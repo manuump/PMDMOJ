@@ -31,3 +31,13 @@ En esta versión, he utilizado **RecyclerView**, **POJO** y **Adapter**. En mi p
 - **EventosActivity**:  
   La clase `EventosActivity` es una Activity en Android que gestiona la lista de eventos mediante un `RecyclerView`, utilizando un adaptador personalizado (`EventoAdapter`) para mostrar los eventos en la interfaz de usuario.
 
+### Version 1.2 - Edición y Alta de Eventos
+
+En esta versión, he agregado funcionalidades para **editar** y **añadir** eventos en la lista existente mediante el uso de **DialogFragment**.
+
+- **Funcionalidad de Alta**:  
+  Se añadió un botón flotante que permite al usuario añadir un nuevo evento. Al pulsarlo, se abre un `DialogFragment` que permite capturar los datos del nuevo evento. Al confirmar, el nuevo evento se agrega a la lista y se actualiza el `RecyclerView`.
+
+- **Funcionalidad de Edición**:  
+  Cada evento ahora incluye un botón adicional para editar. Al pulsar este botón, se abre un `DialogFragment` con los datos del evento pre-rellenados. El usuario puede modificar estos datos y, al confirmar, el evento se actualiza en la lista y en el `RecyclerView`.
+
