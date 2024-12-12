@@ -2,5 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gris">#737373</color>
+
+    <color name="grisSinPresionar">#787878</color>
+    <color name="grisPresionado">#2F2F2F</color>
 </resources>
