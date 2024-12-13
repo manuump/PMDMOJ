@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "88433357889",
+    "project_id": "ociojaen-2b8e8",
+    "storage_bucket": "ociojaen-2b8e8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88433357889:android:fe787a91b3917fcb6282c0",
+        "android_client_info": {
+          "package_name": "com.example.ociojaen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNM0_msIMH8YLwG6HUACgooVCTVfjZo9w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

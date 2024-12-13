@@ -5,14 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
     <EditText
         android:id="@+id/usuarioLogin"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:ems="10"
-        android:hint="Usuario..."
+        android:hint="Email..."
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,14 +40,57 @@
         android:layout_width="138dp"
         android:layout_height="48dp"
         android:layout_marginTop="72dp"
-        android:text="ACCESO"
         android:background="@drawable/boton_acceso"
+        android:text="ACCESO"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.536" />
+
+    <Button
+        android:id="@+id/botonRegistro"
+        android:layout_width="138dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/boton_acceso"
+        android:text="REGISTRO"
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordLogin"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.16" />
+
+    <Button
+        android:id="@+id/botonRecuperar"
+        android:layout_width="242dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/boton_acceso"
+        android:text="RECUPERAR CONTRASEÑA"
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/passwordLogin"
+        app:layout_constraintVertical_bias="0.732" />
+
+    <TextView
+        android:id="@+id/RecuperarPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Has olvidado tu contraseña? Pulsa Aquí"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.811" />
 
     <TextView
         android:id="@+id/letraLoginApp"
@@ -73,7 +116,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918"
+        app:layout_constraintVertical_bias="0.199"
         app:srcCompat="@drawable/iconoociojaen" />
 
 
