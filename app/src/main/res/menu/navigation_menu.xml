@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_eventos"
+        android:icon="@android:drawable/ic_menu_month"
+        android:title="Eventos" />
+    <item
+        android:id="@+id/nav_comentarios"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="Comentarios" />
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/logout"
+        android:title="Cerrar Sesión" />
+</menu>

@@ -60,3 +60,15 @@ En esta versión, hemos integrado **Firebase Authentication** para proporcionar 
 Para mejorar la experiencia del usuario, hemos implementado **SharedPreferences** para guardar el estado de inicio de sesión. Esto permite que:
 - Si el usuario cierra y reabre la aplicación, no sea redirigido al login si ya ha iniciado sesión anteriormente.
 - Cuando el usuario se desloguea, las preferencias se eliminan, asegurando que regrese a la pantalla de inicio de sesión al abrir la aplicación.
+
+### Version 1.4 - Navigation Drawer y Toolbar
+
+En esta versión, se ha implementado el **Navigation Drawer** y la **Toolbar** para mejorar la navegación en la aplicación.
+
+- **Navigation Drawer**:  
+  Se añadió un menú lateral (drawer) con opciones como "Eventos", "Comentarios" y "Cerrar sesión". El menú es accesible desde un icono en la esquina superior izquierda.
+
+- **Toolbar**:  
+  Se añadió una barra de herramientas superior para mejorar la experiencia de usuario. Incluye botones de opciones en la parte derecha para acceder a funcionalidades adicionales.
+
+Con estas mejoras, la navegación en la aplicación es ahora más fluida y accesible.

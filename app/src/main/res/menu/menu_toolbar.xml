@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_buscar"
+        android:title="Buscar por nombre..." />
+    <item
+        android:id="@+id/nav_eventosHoy"
+        android:title="Eventos de hoy" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Cerrar Sesión" />
+</menu>

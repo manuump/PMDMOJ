@@ -4,18 +4,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ociojaen.adapter.EventoAdapter
 import com.example.ociojaen.models.Evento
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -32,11 +38,45 @@ class EventosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_eventos)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Configurar DrawerLayout y Toolbar
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        // Configurar Menu Lateral (Hamburguesa)
+        val navigationView = findViewById<NavigationView>(R.id.navigation_view)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_eventos -> {
+                    Toast.makeText(this, "Todos los eventos", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_comentarios -> {
+                    Toast.makeText(this, "Comentarios", Toast.LENGTH_SHORT).show()
+                }
+                R.id.nav_logout -> {
+                    cerrarSesion()
+                }
+            }
+            drawerLayout.closeDrawers()
+            true
+        }
+
+        // Obtiene el header
+        val headerView = navigationView.getHeaderView(0)
 
         // Inicializar firebase
         auth = Firebase.auth
@@ -47,13 +87,13 @@ class EventosActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
 
-        val saludoTextView = findViewById<TextView>(R.id.saludoTextView)
+        val correoElectronico = headerView.findViewById<TextView>(R.id.correoElectronico)
         val user = FirebaseAuth.getInstance().currentUser
         val email = user?.email
 
         if (email != null) {
-            saludoTextView.text = "Bienvenido , $email"
-            saludoTextView.visibility = View.VISIBLE
+            correoElectronico.text = "$email"
+            correoElectronico.visibility = View.VISIBLE
         }
 
 
@@ -99,10 +139,32 @@ class EventosActivity : AppCompatActivity() {
             mostrarDialogoAgregarEvento()
         }
 
-        // Configurar botón de cerrar sesión
-        val botonCerrarSesion = findViewById<ImageButton>(R.id.botonCerrarSesion)
-        botonCerrarSesion.setOnClickListener {
-            cerrarSesion()
+    }
+
+    // Inflar el menú
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar, menu) // Menú de opciones en el toolbar
+        return true
+    }
+
+    // Configurar Menu esquina 3 puntos
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_buscar -> {
+                // Acción para eventos
+                Toast.makeText(this, "Buscar eventos por nombre", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.nav_eventosHoy -> {
+                // Acción para comentarios
+                Toast.makeText(this, "Eventos de hoy", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            R.id.nav_logout -> {
+                cerrarSesion()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 
