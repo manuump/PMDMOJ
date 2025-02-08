@@ -8,10 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ociojaen.R
-import com.example.ociojaen.models.Evento
+import com.example.ociojaen.data.models.Evento
 
 class EventoAdapter(
-    private val eventos: MutableList<Evento>, // Lista de eventos
+    private var eventos: List<Evento>, // Lista de eventos
     private val onEliminarClick: (Evento) -> Unit, // Callback para eliminar
     private val onEditarClick: (Evento) -> Unit
 ) : RecyclerView.Adapter<EventoAdapter.EventoViewHolder>() {
@@ -22,7 +22,7 @@ class EventoAdapter(
         val tvTitulo: TextView = itemView.findViewById(R.id.tvTitulo)
         val tvDescripcion: TextView = itemView.findViewById(R.id.tvDescripcion)
         val btnEliminar: Button = itemView.findViewById(R.id.btnEliminar)
-        val btnEditar:Button = itemView.findViewById(R.id.btnEditar)
+        val btnEditar: Button = itemView.findViewById(R.id.btnEditar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventoViewHolder {
@@ -48,9 +48,19 @@ class EventoAdapter(
 
         // Manejar clic en botón editar
         holder.btnEditar.setOnClickListener {
-            onEditarClick(evento) // Callback para editar el evento
+            // Al hacer clic, solo pasamos el evento editado
+            val eventoEditado = Evento("Evento Editado", "Descripción Editada", "imagen_editada")
+            onEditarClick(eventoEditado) // Callback para editar el evento
         }
     }
 
+
     override fun getItemCount(): Int = eventos.size
+
+    // Método para actualizar la lista de eventos
+    fun actualizarLista(nuevaLista: List<Evento>) {
+        eventos = nuevaLista
+        notifyDataSetChanged()
+    }
 }
+

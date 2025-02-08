@@ -1,4 +1,4 @@
-package com.example.ociojaen.models
+package com.example.ociojaen.data.models
 
 class Evento (
     var titulo : String,

@@ -72,3 +72,26 @@ En esta versión, se ha implementado el **Navigation Drawer** y la **Toolbar** p
   Se añadió una barra de herramientas superior para mejorar la experiencia de usuario. Incluye botones de opciones en la parte derecha para acceder a funcionalidades adicionales.
 
 Con estas mejoras, la navegación en la aplicación es ahora más fluida y accesible.
+
+## Version 2.1 - Reestructuración MVVM y Fragmentos de Eventos y Comentarios
+
+En esta versión, hemos realizado una reestructuración significativa de la aplicación al adoptar el patrón de diseño **Model-View-ViewModel (MVVM)**, mejorando la organización del código y la separación de responsabilidades. Además, los fragmentos de **Eventos** y **Comentarios** se han integrado para ofrecer una experiencia más dinámica.
+
+### **Novedades de la versión 2.1:**
+
+- **Reestructuración a MVVM**:
+  - La lógica de la pantalla de eventos, que estaba anteriormente en la Activity (`EventosActivity`), se ha trasladado al **ViewModel** correspondiente. Ahora, la Activity solo se encarga de gestionar la UI y las interacciones con el usuario, mientras que el **ViewModel** maneja la lógica de negocio y la comunicación con los datos.
+  - Se ha creado un **ViewModel** específico para los fragmentos de eventos y comentarios, gestionando el flujo de datos y las actualizaciones de la interfaz de forma más eficiente.
+
+- **Fragmentos de Eventos y Comentarios**:
+  - El fragmento de **Eventos** se encarga de mostrar y gestionar la lista de eventos. Utiliza un **RecyclerView** para mostrar los eventos disponibles y permite añadir, editar y eliminar eventos desde el fragmento.
+  - El fragmento de **Comentarios** permite a los usuarios interactuar y dejar sus opiniones sobre los eventos. Los comentarios se gestionan a través de un **RecyclerView** similar al de eventos, y el sistema permite a los usuarios añadir nuevos comentarios.
+
+- **Nueva estructura de proyecto**:
+  - **Adapter**: Gestiona la adaptación de los datos a la interfaz de usuario. Esto incluye el adaptador para el `RecyclerView` que muestra los eventos y comentarios.
+  - **Data**:
+    - **Models**: Se han reorganizado las clases modelo, y se ha añadido la clase **EventoViewModel** para gestionar la lógica del modelo de eventos y la clase **ComentarioViewModel** para los comentarios.
+    - **Repository**: Se ha añadido una capa de **Repository** para gestionar los datos de la aplicación, como la obtención de eventos y comentarios desde diversas fuentes (por ejemplo, Firebase), mejorando la separación de responsabilidades y la reutilización de código.
+  - **UI**: La capa de interfaz de usuario, que incluye los **fragments** y **activities**, interactúa con el `ViewModel` y presenta los datos al usuario. Ahora la pantalla de eventos y comentarios se maneja mediante fragmentos específicos.
+
+Con estas mejoras, la aplicación es más escalable, mantenible y eficiente. La adopción de MVVM permite que la lógica y la interfaz de usuario estén claramente separadas, lo que facilita la implementación de nuevas funcionalidades en el futuro.
