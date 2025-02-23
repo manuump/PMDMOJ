@@ -49,8 +49,7 @@ class EventoAdapter(
         // Manejar clic en botón editar
         holder.btnEditar.setOnClickListener {
             // Al hacer clic, solo pasamos el evento editado
-            val eventoEditado = Evento("Evento Editado", "Descripción Editada", "imagen_editada")
-            onEditarClick(eventoEditado) // Callback para editar el evento
+            onEditarClick(evento) // Callback para editar el evento
         }
     }
 

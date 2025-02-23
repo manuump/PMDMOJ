@@ -58,8 +58,7 @@ class EventosFragment : Fragment() {
 
     private fun mostrarDialogoEditarEvento(evento: Evento) {
         val dialogFragment = EventoDialogFragment(evento) { eventoEditado ->
-            // Llamamos al ViewModel para editar el evento
-            viewModel.editarEvento(eventoEditado)
+            viewModel.editarEvento(evento, eventoEditado) // Pasar evento original y editado
         }
         dialogFragment.show(parentFragmentManager, "EditarEventoDialog")
     }

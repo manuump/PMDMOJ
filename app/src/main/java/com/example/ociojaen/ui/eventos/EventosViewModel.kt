@@ -23,24 +23,23 @@ class EventosViewModel : ViewModel() {
         _eventos.value = repository.obtenerEventos() // Actualizar LiveData
     }
 
-    fun editarEvento(eventoEditado: Evento) {
-        // Buscar el evento original en la lista
-        val eventoOriginal = _eventos.value?.find { it.titulo == eventoEditado.titulo }
-        eventoOriginal?.let {
-            // Obtener el índice del evento original
-            val index = _eventos.value?.indexOf(it)
-            if (index != null && index >= 0) {
-                // Crear una nueva lista mutable a partir de la lista original
-                val eventosActualizados = _eventos.value?.toMutableList()
+    fun editarEvento(eventoOriginal: Evento, eventoEditado: Evento) {
+        val eventosActualizados = _eventos.value?.toMutableList() ?: return
 
-                // Verificar que la lista no sea nula
-                eventosActualizados?.let {
-                    // Actualizar el evento en el índice correspondiente
-                    it[index] = eventoEditado
-                    // Asignar la nueva lista al LiveData
-                    _eventos.value = it
-                }
-            }
+        val index = eventosActualizados.indexOf(eventoOriginal)
+        if (index != -1) {
+            // Si la imagen no se cambia, conservamos la anterior
+            val imagenFinal = if (eventoEditado.imagen.isEmpty()) eventoOriginal.imagen else eventoEditado.imagen
+            // Crear un nuevo evento con la imagen correcta
+            val eventoActualizado = Evento(
+                titulo = eventoEditado.titulo,
+                descripcion = eventoEditado.descripcion,
+                imagen = imagenFinal
+            )
+
+            // Actualizar la lista
+            eventosActualizados[index] = eventoActualizado
+            _eventos.value = eventosActualizados
         }
     }
 

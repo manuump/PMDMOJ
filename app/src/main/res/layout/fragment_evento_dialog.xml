@@ -1,20 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_gravity="center"
-    android:minWidth="300dp"
-    android:minHeight="30dp"
-    android:weightSum="1">
+    android:padding="16dp">
+
+
+    <TextView
+        android:id="@+id/textViewImagen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Imagen de Evento" />
+
+    <ImageView
+        android:id="@+id/ivPreview"
+        android:layout_width="378dp"
+        android:layout_height="148dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray"
+        android:scaleType="centerCrop" />
+
+    <Button
+        android:id="@+id/btnTomarFoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Imagen desde cámara" />
+
+    <!-- Botón para seleccionar una imagen de la galería -->
+    <Button
+        android:id="@+id/btnSeleccionarGaleria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seleccionar imagen de galería" />
 
     <EditText
         android:id="@+id/etTitulo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:height="48dp"
+        android:layout_height="59dp"
         android:hint="Título"
         android:padding="10dp"
         android:textSize="16sp" />
@@ -22,8 +43,7 @@
     <EditText
         android:id="@+id/etDescripcion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:height="48dp"
+        android:layout_height="87dp"
         android:hint="Descripción"
         android:padding="10dp"
         android:textSize="16sp" />
@@ -34,7 +54,6 @@
         android:layout_height="wrap_content"
         android:text="Guardar"
         android:background="@drawable/boton_acceso"
-        app:backgroundTint="@null"
         android:textColor="@android:color/white"
         android:padding="12dp"/>
 
@@ -42,10 +61,9 @@
         android:id="@+id/btnCancelar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/boton_acceso"
-        app:backgroundTint="@null"
-        android:padding="12dp"
         android:text="Cancelar"
-        android:textColor="@android:color/white" />
+        android:background="@drawable/boton_acceso"
+        android:textColor="@android:color/white"
+        android:padding="12dp"/>
 
 </LinearLayout>
