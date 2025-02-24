@@ -2,8 +2,6 @@ package com.example.ociojaen.ui.eventos
 
 import android.Manifest
 import android.app.Activity
-import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -22,14 +20,10 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import com.example.ociojaen.R
 import com.example.ociojaen.data.models.Evento
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.*
 
 class EventoDialogFragment(
-    private val evento: Evento? = null, // Evento a editar, si es null significa que es nuevo
+    private val evento: Evento? = null, // Si es null, es un nuevo evento
     private val onEventoGuardado: (Evento) -> Unit
 ) : DialogFragment() {
 
@@ -42,7 +36,8 @@ class EventoDialogFragment(
     private lateinit var btnCancelar: Button
 
     private var currentPhotoPath: String? = null
-    private var imagenBase64: String? = null // Imagen en Base64 para futuro uso
+    private var imagenBase64: String? = null // Para almacenar la imagen en Base64
+    private var imagenUri: String? = null // Guardará la URI de la imagen tomada
 
     private val REQUEST_CAMERA = 100
     private val REQUEST_GALLERY = 101
@@ -52,7 +47,11 @@ class EventoDialogFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.fragment_evento_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_evento_dialog, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         etTitulo = view.findViewById(R.id.etTitulo)
         etDescripcion = view.findViewById(R.id.etDescripcion)
@@ -62,45 +61,74 @@ class EventoDialogFragment(
         btnGuardar = view.findViewById(R.id.btnGuardar)
         btnCancelar = view.findViewById(R.id.btnCancelar)
 
-        // Si es edición, rellenar los campos
+        // Si estamos editando, precargar los datos
         evento?.let {
             etTitulo.setText(it.titulo)
             etDescripcion.setText(it.descripcion)
+
+            // Si hay una imagen previa, mostrarla
+            if (it.imagen.isNotEmpty()) {
+                val bitmap = BitmapFactory.decodeFile(it.imagen)
+                ivPreview.setImageBitmap(bitmap)
+                imagenUri = it.imagen // Guardar la URI de la imagen existente
+            }
         }
 
         btnTomarFoto.setOnClickListener { tomarFoto() }
         btnSeleccionarGaleria.setOnClickListener { seleccionarImagenGaleria() }
 
         btnGuardar.setOnClickListener {
-            val nuevoEvento = Evento(
-                titulo = etTitulo.text.toString(),
-                descripcion = etDescripcion.text.toString(),
-                imagen = imagenBase64 ?: evento?.imagen ?: "" // Mantener imagen si no se cambia
+            val titulo = etTitulo.text.toString()
+            val descripcion = etDescripcion.text.toString()
+
+            val eventoGuardado = Evento(
+                titulo = titulo,
+                descripcion = descripcion,
+                imagen = imagenUri ?: evento?.imagen ?: "" // Guardamos la imagen URI
             )
-            onEventoGuardado(nuevoEvento)
+
+            onEventoGuardado(eventoGuardado)
             dismiss()
         }
 
         btnCancelar.setOnClickListener { dismiss() }
-
-        return view
     }
 
     private fun tomarFoto() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), PERMISSION_CAMERA)
+            // Si no tiene permisos, pedirlos en tiempo de ejecución
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                PERMISSION_CAMERA
+            )
         } else {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            // Crear archivo para guardar la imagen
             val photoFile = createImageFile()
-            photoFile?.also {
-                val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "com.example.ociojaen.fileprovider", it)
+            if (photoFile != null) {
+                val photoURI: Uri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "com.example.ociojaen.fileprovider",
+                    photoFile
+                )
+
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                startActivityForResult(intent, REQUEST_CAMERA)
+
+                // Verificar que hay una app de cámara disponible
+                if (intent.resolveActivity(requireContext().packageManager) != null) {
+                    startActivityForResult(intent, REQUEST_CAMERA)
+                } else {
+                    Toast.makeText(requireContext(), "No se encontró una app de cámara", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Error al crear el archivo de imagen", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
     private fun seleccionarImagenGaleria() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -109,15 +137,20 @@ class EventoDialogFragment(
 
     private fun createImageFile(): File? {
         return try {
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val storageDir: File? = requireContext().getExternalFilesDir(null)
-            File.createTempFile("IMG_${timeStamp}_", ".jpg", storageDir).apply {
-                currentPhotoPath = absolutePath
+            val storageDir = File(requireContext().getExternalFilesDir(null), "Pictures")
+            if (!storageDir.exists()) {
+                storageDir.mkdirs() // Crea la carpeta si no existe
             }
+
+            val file = File(storageDir, "evento_${System.currentTimeMillis()}.jpg")
+            currentPhotoPath = file.absolutePath
+            file
         } catch (ex: IOException) {
+            ex.printStackTrace()
             null
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -126,17 +159,30 @@ class EventoDialogFragment(
             when (requestCode) {
                 REQUEST_CAMERA -> {
                     val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-                    ivPreview.setImageBitmap(bitmap)
-                    imagenBase64 = convertirImagenABase64(bitmap)
+                    if (bitmap != null) {
+                        ivPreview.setImageBitmap(bitmap)
+                        imagenUri = currentPhotoPath // Guardamos la URI
+                    } else {
+                        Toast.makeText(requireContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 REQUEST_GALLERY -> {
                     val selectedImageUri = data?.data ?: return
                     val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, selectedImageUri)
                     ivPreview.setImageBitmap(bitmap)
-                    imagenBase64 = convertirImagenABase64(bitmap)
+                    imagenUri = guardarImagen(bitmap) // Guardamos la imagen seleccionada
                 }
             }
         }
+    }
+
+
+    private fun guardarImagen(bitmap: Bitmap): String {
+        val file = File(requireContext().filesDir, "evento_${System.currentTimeMillis()}.jpg")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        }
+        return file.absolutePath // Retornamos la ruta donde se guardó la imagen
     }
 
     private fun convertirImagenABase64(bitmap: Bitmap): String {

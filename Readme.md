@@ -73,11 +73,9 @@ En esta versión, se ha implementado el **Navigation Drawer** y la **Toolbar** p
 
 Con estas mejoras, la navegación en la aplicación es ahora más fluida y accesible.
 
-## Version 2.1 - Reestructuración MVVM y Fragmentos de Eventos y Comentarios
+### Version 2.1 - Reestructuración MVVM y Fragmentos de Eventos y Comentarios
 
 En esta versión, hemos realizado una reestructuración significativa de la aplicación al adoptar el patrón de diseño **Model-View-ViewModel (MVVM)**, mejorando la organización del código y la separación de responsabilidades. Además, los fragmentos de **Eventos** y **Comentarios** se han integrado para ofrecer una experiencia más dinámica.
-
-### **Novedades de la versión 2.1:**
 
 - **Reestructuración a MVVM**:
   - La lógica de la pantalla de eventos, que estaba anteriormente en la Activity (`EventosActivity`), se ha trasladado al **ViewModel** correspondiente. Ahora, la Activity solo se encarga de gestionar la UI y las interacciones con el usuario, mientras que el **ViewModel** maneja la lógica de negocio y la comunicación con los datos.
@@ -95,3 +93,19 @@ En esta versión, hemos realizado una reestructuración significativa de la apli
   - **UI**: La capa de interfaz de usuario, que incluye los **fragments** y **activities**, interactúa con el `ViewModel` y presenta los datos al usuario. Ahora la pantalla de eventos y comentarios se maneja mediante fragmentos específicos.
 
 Con estas mejoras, la aplicación es más escalable, mantenible y eficiente. La adopción de MVVM permite que la lógica y la interfaz de usuario estén claramente separadas, lo que facilita la implementación de nuevas funcionalidades en el futuro.
+
+### **Versión 3.1 - Captura y Selección de Imágenes en Eventos**
+
+En esta versión, se ha añadido la funcionalidad para capturar imágenes desde la cámara y seleccionar imágenes desde la galería al crear o editar un evento. Ahora los usuarios pueden añadir imágenes personalizadas a los eventos, mejorando la experiencia y la personalización de la aplicación.
+
+- **Captura de imagen desde la cámara**  
+  Se ha implementado la opción de tomar una foto y guardarla en la aplicación. Se gestionan los permisos de cámara en tiempo de ejecución .
+
+- **Selección de imagen desde la galería**  
+  Se permite elegir una imagen desde la galería y asociarla a un evento. Se ha mejorado la gestión de rutas de archivo para evitar errores al cargar imágenes.
+
+- **Vista previa de la imagen seleccionada**  
+  Se ha añadido un `ImageView` en el `DialogFragment` para que el usuario pueda ver la imagen antes de guardarla.
+
+- **Conversión de imagen a Base64**  
+  Se ha preparado un método para convertir la imagen a Base64
