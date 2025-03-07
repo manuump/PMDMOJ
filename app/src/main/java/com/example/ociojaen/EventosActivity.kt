@@ -12,25 +12,30 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.ociojaen.ui.comentarios.ComentariosFragment
 import com.example.ociojaen.ui.eventos.EventosFragment
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 
 class EventosActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
+    private var userEmail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_eventos)
 
-        // Inicializar firebase
-        auth = Firebase.auth
+        // Obtener SharedPreferences
         sharedPreferences = getSharedPreferences("PreferenciasApp", Context.MODE_PRIVATE)
 
+        // Obtener datos del usuario desde SharedPreferences
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        userEmail = sharedPreferences.getString("user_email", "Usuario")
+
+        if (!isLoggedIn) {
+            // Si no está logueado, redirigir al Login
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
         // Configurar el DrawerLayout y Toolbar
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -51,6 +56,7 @@ class EventosActivity : AppCompatActivity() {
         // Mostrar email en el Header del Navigation Drawer
         actualizarCorreoUsuario()
 
+        // Configurar la navegación
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_eventos -> cambiarFragmento(EventosFragment())
@@ -75,23 +81,16 @@ class EventosActivity : AppCompatActivity() {
     }
 
     private fun actualizarCorreoUsuario() {
-        val user = auth.currentUser
         val headerView: View = navigationView.getHeaderView(0)
         val correoTextView = headerView.findViewById<TextView>(R.id.correoElectronico)
 
-        if (user != null) {
-            correoTextView.text = user.email
-            correoTextView.visibility = View.VISIBLE
-        } else {
-            correoTextView.text = "No autenticado"
-        }
+        correoTextView.text = userEmail ?: "No autenticado"
+        correoTextView.visibility = View.VISIBLE
     }
 
     private fun cerrarSesion() {
-        auth.signOut()
-
-        // Eliminar el estado de inicio de sesión de SharedPreferences
-        sharedPreferences.edit().putBoolean("isLoggedIn", false).apply()
+        // Eliminar el estado de inicio de sesión y token de SharedPreferences
+        sharedPreferences.edit().clear().apply()
 
         // Redirigir al LoginActivity
         val intent = Intent(this, LoginActivity::class.java)

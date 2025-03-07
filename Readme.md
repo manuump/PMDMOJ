@@ -109,3 +109,27 @@ En esta versión, se ha añadido la funcionalidad para capturar imágenes desde 
 
 - **Conversión de imagen a Base64**  
   Se ha preparado un método para convertir la imagen a Base64
+
+### Versión 4.1 - Conexión al Backend con Retrofit
+
+Para conectar la aplicación Android con el backend desarrollado en **Ktor**. Retrofit simplifica las solicitudes HTTP y la serialización/deserialización de datos JSON.
+
+##### Configuración de Retrofit
+- Se agregaron las dependencias de **Retrofit** y **Gson** en el `build.gradle`.
+- Se configuró Retrofit con la **URL base** del backend y un **interceptor para logging**.
+
+##### Definición de la API
+- Se creó una interfaz `ApiService` con métodos para cada endpoint (**GET, POST, PUT, DELETE**).
+- Se utilizaron anotaciones como `@GET`, `@POST`, `@Header`, y `@Body` para definir las solicitudes.
+
+##### Manejo de Respuestas
+- Las respuestas se manejan con `suspend` y `Response<T>`, aprovechando las **corrutinas** para operaciones asíncronas.
+- Se validan las respuestas con `isSuccessful` y se procesan los datos o errores.
+
+##### Integración con el ViewModel
+- El **ViewModel** realiza las llamadas a la API a través del **Repository**.
+- Los datos se exponen mediante **LiveData** o **StateFlow** para actualizar la UI.
+
+##### Autenticación
+- Se incluye el **token JWT** en el encabezado de las solicitudes usando `@Header("Authorization")`.
+

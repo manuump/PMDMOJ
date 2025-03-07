@@ -5,43 +5,63 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ociojaen.data.models.Evento
 import com.example.ociojaen.data.repository.EventoRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class EventosViewModel : ViewModel() {
 
     private val repository = EventoRepository()
-    private val _eventos = MutableLiveData<List<Evento>>(repository.obtenerEventos())
 
-    val eventos: LiveData<List<Evento>> = _eventos
+    private val _eventos = MutableLiveData<List<Evento>>()
+    val eventos: LiveData<List<Evento>> get() = _eventos
 
-    fun agregarEvento(evento: Evento) {
-        repository.agregarEvento(evento)
-        _eventos.value = repository.obtenerEventos() // Actualizar LiveData
-    }
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> get() = _errorMessage
 
-    fun eliminarEvento(evento: Evento) {
-        repository.eliminarEvento(evento)
-        _eventos.value = repository.obtenerEventos() // Actualizar LiveData
-    }
-
-    fun editarEvento(eventoOriginal: Evento, eventoEditado: Evento) {
-        val eventosActualizados = _eventos.value?.toMutableList() ?: return
-
-        val index = eventosActualizados.indexOf(eventoOriginal)
-        if (index != -1) {
-            // Si la imagen no se cambia, conservamos la anterior
-            val imagenFinal = if (eventoEditado.imagen.isEmpty()) eventoOriginal.imagen else eventoEditado.imagen
-            // Crear un nuevo evento con la imagen correcta
-            val eventoActualizado = Evento(
-                titulo = eventoEditado.titulo,
-                descripcion = eventoEditado.descripcion,
-                imagen = imagenFinal
-            )
-
-            // Actualizar la lista
-            eventosActualizados[index] = eventoActualizado
-            _eventos.value = eventosActualizados
+    fun getEventos(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val eventos = repository.getEventos(token)
+            _eventos.postValue(eventos ?: emptyList())
+            if (eventos == null) {
+                _errorMessage.postValue("Error al obtener los eventos")
+            }
         }
     }
 
-}
+    fun createEvento(token: String, evento: Evento, onSuccess: () -> Unit, onError: () -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = repository.createEvento(token, evento)
+            if (result != null) {
+                getEventos(token)
+                onSuccess()
+            } else {
+                onError()
+            }
+        }
+    }
 
+    fun updateEvento(token: String, id: Int, evento: Evento, onSuccess: () -> Unit, onError: () -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val success = repository.updateEvento(token, id, evento)
+            if (success) {
+                getEventos(token)
+                onSuccess()
+            } else {
+                onError()
+            }
+        }
+    }
+
+    fun deleteEvento(token: String, id: Int, onSuccess: () -> Unit, onError: () -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val success = repository.deleteEvento(token, id)
+            if (success) {
+                getEventos(token)
+                onSuccess()
+            } else {
+                onError()
+            }
+        }
+    }
+}

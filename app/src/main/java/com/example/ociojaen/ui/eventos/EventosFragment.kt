@@ -1,21 +1,23 @@
 package com.example.ociojaen.ui.eventos
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ociojaen.adapter.EventoAdapter
 import com.example.ociojaen.data.models.Evento
 import com.example.ociojaen.databinding.FragmentEventosBinding
+import com.google.android.material.snackbar.Snackbar
 
 class EventosFragment : Fragment() {
 
     private lateinit var binding: FragmentEventosBinding
-    private val viewModel: EventosViewModel by viewModels()
+    private lateinit var viewModel: EventosViewModel
+    private lateinit var adapter: EventoAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,45 +30,100 @@ class EventosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Configuración del RecyclerView
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val adapter = EventoAdapter(
-            eventos = emptyList(), // Lista vacía inicialmente
-            onEliminarClick = { evento -> viewModel.eliminarEvento(evento) },
-            onEditarClick = { evento -> mostrarDialogoEditarEvento(evento) }
-        )
-        binding.recyclerView.adapter = adapter
+        viewModel = ViewModelProvider(this).get(EventosViewModel::class.java)
 
-        // Observamos los cambios en los eventos
-        viewModel.eventos.observe(viewLifecycleOwner) { lista ->
-            adapter.actualizarLista(lista) // Actualizamos la lista de eventos
+        // Configurar RecyclerView
+        val recyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = EventoAdapter(emptyList(), onEliminarClick = { evento ->
+            eliminarEvento(evento)
+        }, onEditarClick = { evento ->
+            editarEvento(evento)
+        })
+        recyclerView.adapter = adapter
+
+        // Obtener el token de SharedPreferences
+        val sharedPreferences = requireActivity().getSharedPreferences("PreferenciasApp", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", null)
+
+        if (token != null) {
+            viewModel.getEventos(token)
+        } else {
+            mostrarSnackbar("No se encontró el token de autenticación")
         }
 
-        // Acción del FloatingActionButton para añadir un nuevo evento
+        // Observar cambios en la lista de eventos
+        viewModel.eventos.observe(viewLifecycleOwner) { eventos ->
+            eventos?.let {
+                adapter.actualizarLista(it)
+            }
+        }
+
+        // Observar mensajes de error
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            mostrarSnackbar(errorMessage)
+        }
+
+        // Configurar el botón flotante (FAB)
         binding.btnAdd.setOnClickListener {
-            mostrarDialogoAgregarEvento()
+            abrirDialogoNuevoEvento(token)
         }
     }
 
-    private fun mostrarDialogoAgregarEvento() {
-        val dialogFragment = EventoDialogFragment { nuevoEvento ->
-            // Llamamos al ViewModel para agregar el nuevo evento
-            viewModel.agregarEvento(nuevoEvento)
+    private fun abrirDialogoNuevoEvento(token: String?) {
+        if (token == null) {
+            mostrarSnackbar("No se encontró el token de autenticación")
+            return
         }
-        dialogFragment.show(parentFragmentManager, "AgregarEventoDialog")
+
+        // Crear un diálogo para añadir un nuevo evento
+        val dialog = EventoDialogFragment(onEventoGuardado = { nuevoEvento ->
+            viewModel.createEvento(token, nuevoEvento, onSuccess = {
+                mostrarSnackbar("Evento creado con éxito")
+                viewModel.getEventos(token)
+            }, onError = {
+                mostrarSnackbar("Error al crear el evento")
+            })
+        })
+        dialog.show(parentFragmentManager, "EventoDialogFragment")
     }
 
-    private fun mostrarDialogoEditarEvento(evento: Evento) {
-        val dialogFragment = EventoDialogFragment(evento) { eventoEditado ->
-            viewModel.editarEvento(evento, eventoEditado) // Pasar evento original y editado
+    private fun eliminarEvento(evento: Evento) {
+        val sharedPreferences = requireActivity().getSharedPreferences("PreferenciasApp", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", null)
+
+        if (token != null) {
+            viewModel.deleteEvento(token, evento.id!!, onSuccess = {
+                mostrarSnackbar("Evento eliminado")
+                viewModel.getEventos(token)
+            }, onError = {
+                mostrarSnackbar("Error al eliminar el evento")
+            })
         }
-        dialogFragment.show(parentFragmentManager, "EditarEventoDialog")
     }
 
-    override fun onResume() {
-        super.onResume()
-        (activity as? AppCompatActivity)?.supportActionBar?.title = "Eventos"
+    private fun editarEvento(evento: Evento) {
+        val sharedPreferences = requireActivity().getSharedPreferences("PreferenciasApp", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("token", null)
+
+        if (token == null) {
+            mostrarSnackbar("No se encontró el token de autenticación")
+            return
+        }
+
+        // Crear un diálogo para editar el evento
+        val dialog = EventoDialogFragment(evento, onEventoGuardado = { eventoActualizado ->
+            viewModel.updateEvento(token, evento.id!!, eventoActualizado, onSuccess = {
+                mostrarSnackbar("Evento actualizado")
+                viewModel.getEventos(token)
+            }, onError = {
+                mostrarSnackbar("Error al actualizar el evento")
+            })
+        })
+        dialog.show(parentFragmentManager, "EventoDialogFragment")
+    }
+
+    private fun mostrarSnackbar(mensaje: String) {
+        Snackbar.make(binding.root, mensaje, Snackbar.LENGTH_SHORT).show()
     }
 }
-
-
