@@ -1,5 +1,6 @@
 package com.example.ociojaen.adapter
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ociojaen.R
 import com.example.ociojaen.data.models.Evento
+import android.graphics.BitmapFactory
+import android.util.Base64
 
 class EventoAdapter(
     private var eventos: List<Evento>,
@@ -36,10 +39,22 @@ class EventoAdapter(
         holder.tvTitulo.text = evento.titulo
         holder.tvDescripcion.text = evento.descripcion
 
-        Glide.with(holder.itemView.context)
-            .load(evento.imagen) // URL de la imagen
-            .error(R.drawable.error) // Imagen de error
-            .into(holder.ivImagen)
+        if (!evento.imagen.isNullOrEmpty()) {
+            // Verificar si la imagen es Base64
+            if (evento.imagen.startsWith("https")) {
+                // Si es una URL, cargarla normalmente con Glide
+                Glide.with(holder.itemView.context)
+                    .load(evento.imagen) // Suponiendo que esto sea una URL válida
+                    .error(R.drawable.error) // Imagen de error
+                    .into(holder.ivImagen)
+            } else {
+                val bitmap = decodeBase64ToBitmap(evento.imagen)
+                holder.ivImagen.setImageBitmap(bitmap)
+
+            }
+        } else {
+            holder.ivImagen.setImageResource(R.drawable.error) // Imagen de error si no hay imagen
+        }
 
         // Botón para eliminar
         holder.btnEliminar.setOnClickListener {
@@ -58,5 +73,10 @@ class EventoAdapter(
     fun actualizarLista(nuevaLista: List<Evento>) {
         eventos = nuevaLista
         notifyDataSetChanged()
+    }
+
+    private fun decodeBase64ToBitmap(base64Str: String): Bitmap {
+        val decodedBytes = Base64.decode(base64Str.substring(base64Str.indexOf(",") + 1), Base64.DEFAULT) // Eliminar el prefijo de tipo de imagen
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 }
